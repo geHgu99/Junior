@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         jokeLiveData.observe(
             this,
             Observer { responseString ->
-                updateUI(responseString)
+                addItem(responseString)
             }
         )
     }
@@ -71,15 +71,26 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun getItemCount() = jokes.size
+
+
     }
 
-    private fun updateUI(requestText: String? = null) {
+    private fun updateUI() {
         val jokes = jokeListViewModel.jokes
-        if (requestText != null) {
-            jokes.add(requestText)
-            Log.d(TAG, jokes.size.toString())
-        }
+
         adapter = JokeAdapter(jokes)
         recyclerView.adapter = adapter
+    }
+
+    private fun addItem(requestText: String? = null) {
+        if (requestText != null) {
+            jokeListViewModel.jokes.add(requestText)
+            adapter = JokeAdapter(jokeListViewModel.jokes)
+            val addPosition = jokeListViewModel.jokes.size
+            adapter?.notifyItemInserted(addPosition)
+            recyclerView.adapter = adapter
+        } else {
+            Log.d(TAG, "New item is null")
+        }
     }
 }
