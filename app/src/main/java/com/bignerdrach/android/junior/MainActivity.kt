@@ -8,16 +8,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bignerdrach.android.junior.api.GeekJokesApi
 import com.bignerdrach.android.junior.api.JokeFetch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
 private const val TAG = "MainActivity"
 
@@ -26,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private var adapter: JokeAdapter? = null
     private val jokeListViewModel: JokeViewModel by lazy {
-        ViewModelProviders.of(this).get(JokeViewModel::class.java)
+        ViewModelProvider(this).get(JokeViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
