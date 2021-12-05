@@ -7,7 +7,7 @@ class JokeViewModel : ViewModel(){
     val jokes = mutableListOf<String>()
 
     init {
-        for (i in 0 until 25) {
+        for (i in 0 until 2) {
             jokes.add("Joke number $i")
         }
     }

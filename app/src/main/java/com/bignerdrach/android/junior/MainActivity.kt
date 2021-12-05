@@ -6,10 +6,13 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bignerdrach.android.junior.api.GeekJokesApi
+import com.bignerdrach.android.junior.api.JokeFetch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,28 +42,13 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl("https://geek-jokes.sameerkumar.website/")
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
-
-        val geekJokesApi: GeekJokesApi = retrofit.create(GeekJokesApi::class.java)
-
-        val request: Call<String> = geekJokesApi.fetchContents()
-
-        var requestText: String?
-
-        request.enqueue(object : Callback<String> {
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.e(TAG, "Failed", t)
+        val jokeLiveData: LiveData<String> = JokeFetch().fetchContents()
+        jokeLiveData.observe(
+            this,
+            Observer { responseString ->
+                updateUI(responseString)
             }
-
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                requestText = response.body().toString()
-                Log.d(TAG, "Response $requestText")
-                updateUI(requestText)
-            }
-        })
+        )
     }
 
     private inner class JokeHolder(view: View)
@@ -70,6 +58,7 @@ class MainActivity : AppCompatActivity() {
 
     private inner class JokeAdapter(var jokes: List<String>)
         : RecyclerView.Adapter<JokeHolder>() {
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JokeHolder {
             val view = layoutInflater.inflate(R.layout.list_item_joke, parent, false)
             return JokeHolder(view)
